@@ -7,6 +7,7 @@ const flash = require("express-flash");
 const LocalStrategy = require("passport-local").Strategy;
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const bcrypt = require("bcryptjs");
 const User = require("./models/user");
 
 
@@ -34,10 +35,14 @@ passport.use(
             if (!user) {
                 return done(null, false, req.flash("message", "Incorrect username"));
             }
-            if (user.password !== password) {
-                return done(null, false, req.flash("message", "Incorrect password"));
-            }
-            return done(null, user);
+            bcrypt.compare(password, user.password, (err, res) => {
+                if (res) {
+                    return done(null, user);
+                } else {
+                    return done(null, false, req.flash("message", "Incorrect password"));
+                }
+            });
+            // return done(null, user);
         });
     })
 );
@@ -85,26 +90,31 @@ app.post("/sign-up", (req, res, next) => {
         return res.redirect("/sign-up");
     }
 
-    // Check to see if user exists
-    User.find({username: req.body.username}, (err, results) => {
+    bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
         if (err) {
             return next(err);
         }
-        if (results.length) {
-            req.flash("message", "Username already exists");
-            return res.redirect("/sign-up");
-        } else {
-            // If user doesn't exist, create one
-            const user = new User({
-                username: req.body.username,
-                password: req.body.password
-            }).save(err => {
-                if (err) {
-                    return next(err);
-                }
-                res.redirect("/");
-            });
-        }
+        // Check to see if user exists
+        User.find({username: req.body.username}, (err, results) => {
+            if (err) {
+                return next(err);
+            }
+            if (results.length) {
+                req.flash("message", "Username already exists");
+                return res.redirect("/sign-up");
+            } else {
+                // If user doesn't exist, create one
+                const user = new User({
+                    username: req.body.username,
+                    password: hashedPassword
+                }).save(err => {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.redirect("/");
+                });
+            }
+        });
     });
 });
 
