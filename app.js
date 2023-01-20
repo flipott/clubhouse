@@ -9,6 +9,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcryptjs");
 const User = require("./models/user");
+const Post = require("./models/post");
 
 
 const mongoDb = process.env.DB;
@@ -61,10 +62,21 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
 
-app.get("/", (req, res, next) => {
+app.get("/", async (req, res, next) => {
     const displayMessage = req.flash("message");
     req.flash("message", null);
-    res.render("index", { user: req.user, message: displayMessage });
+
+    try {
+        Post.find({}, (err, results) => {
+            if (err) {
+                return next(err);
+            }
+            console.log(results[0]);
+            res.render("index", { user: req.user, message: displayMessage, posts: results[0] });
+        });
+    } catch(err) {
+        res.render("index", { user: req.user, message: displayMessage, posts: null });
+    }
 });
 
 app.get("/log-in", (req, res, next) => {
@@ -134,5 +146,25 @@ app.get("/log-out", (req, res, next) => {
         res.redirect("/");
     });
 });
+
+app.get("/new-post", (req, res, next) => {
+    const displayMessage = req.flash("message");
+    req.flash("message", null);
+    res.render("new-post", { user: req.user, message: displayMessage });
+})
+
+app.post("/new-post", (req, res, next) => {
+  const post = new Post({
+    title: req.body.title,
+    body: req.body.body,
+    timestamp: new Date(),
+    username: req.user.username
+  }).save(err => {
+    if (err) {
+        return next(err);
+    }
+    res.redirect("/");
+  });
+})
 
 app.listen(3000, () => console.log("Listening on Port 3000."));
