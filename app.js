@@ -71,8 +71,8 @@ app.get("/", async (req, res, next) => {
             if (err) {
                 return next(err);
             }
-            console.log(results[0]);
-            res.render("index", { user: req.user, message: displayMessage, posts: results[0] });
+            console.log(typeof(results));
+            res.render("index", { user: req.user, message: displayMessage, posts: results });
         });
     } catch(err) {
         res.render("index", { user: req.user, message: displayMessage, posts: null });
