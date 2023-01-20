@@ -1,4 +1,5 @@
 const express = require("express");
+const { body, validationResult } = require('express-validator');
 const path = require("path");
 const session = require("express-session");
 const dotenv = require('dotenv').config();
@@ -95,39 +96,42 @@ app.get("/new", (req, res, next) => {
     res.render("new-post");
 });
 
-app.post("/sign-up", (req, res, next) => {
-    // Passwords don't match
-    if (req.body.password !== req.body["confirm-password"]) {
-        req.flash("message", "Passwords do not match");
-        return res.redirect("/sign-up");
-    }
+app.post("/sign-up", 
+        body('username').not().isEmpty().trim().escape(),
+        body('password').not().isEmpty(),
+        (req, res, next) => {
+                // Passwords don't match
+                if (req.body.password !== req.body["confirm-password"]) {
+                    req.flash("message", "Passwords do not match");
+                    return res.redirect("/sign-up");
+                }
 
-    bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
-        if (err) {
-            return next(err);
-        }
-        // Check to see if user exists
-        User.find({username: req.body.username}, (err, results) => {
-            if (err) {
-                return next(err);
-            }
-            if (results.length) {
-                req.flash("message", "Username already exists");
-                return res.redirect("/sign-up");
-            } else {
-                // If user doesn't exist, create one
-                const user = new User({
-                    username: req.body.username,
-                    password: hashedPassword
-                }).save(err => {
+                bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
                     if (err) {
                         return next(err);
                     }
-                    res.redirect("/");
+                    // Check to see if user exists
+                    User.find({username: req.body.username}, (err, results) => {
+                        if (err) {
+                            return next(err);
+                        }
+                        if (results.length) {
+                            req.flash("message", "Username already exists");
+                            return res.redirect("/sign-up");
+                        } else {
+                            // If user doesn't exist, create one
+                            const user = new User({
+                                username: req.body.username,
+                                password: hashedPassword
+                            }).save(err => {
+                                if (err) {
+                                    return next(err);
+                                }
+                                res.redirect("/");
+                            });
+                        }
+                    });
                 });
-            }
-        });
-    });
 });
 
 app.post("/log-in",
@@ -153,18 +157,26 @@ app.get("/new-post", (req, res, next) => {
     res.render("new-post", { user: req.user, message: displayMessage });
 })
 
-app.post("/new-post", (req, res, next) => {
-  const post = new Post({
-    title: req.body.title,
-    body: req.body.body,
-    timestamp: new Date(),
-    username: req.user.username
-  }).save(err => {
-    if (err) {
-        return next(err);
-    }
-    res.redirect("/");
-  });
+app.post(
+    "/new-post", 
+    body('title').not().isEmpty().trim().escape(),
+    body('body').not().isEmpty().trim().escape(),
+    (req, res, next) => {
+        const errors = (validationResult(req));
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        const post = new Post({
+            title: req.body.title,
+            body: req.body.body,
+            timestamp: new Date(),
+            username: req.user.username
+        }).save(err => {
+            if (err) {
+                return next(err);
+            }
+            res.redirect("/");
+        });
 })
 
 app.listen(3000, () => console.log("Listening on Port 3000."));
