@@ -21,6 +21,7 @@ db.on("error", console.error.bind(console, "Mongo connection error"));
 const app = express();
 app.set("views", __dirname + "/views");
 app.set("view engine", "ejs");
+app.use(express.static(__dirname + '/public'));
 
 app.use(session({ secret: process.env.SECRET, resave: false, saveUninitialized: true }));
 app.use(flash());
@@ -73,7 +74,7 @@ app.get("/", async (req, res, next) => {
                 return next(err);
             }
             console.log(typeof(results));
-            res.render("index", { user: req.user, message: displayMessage, posts: results });
+            res.render("index", { user: req.user, message: displayMessage, posts: results.reverse() });
         });
     } catch(err) {
         res.render("index", { user: req.user, message: displayMessage, posts: null });
@@ -83,13 +84,13 @@ app.get("/", async (req, res, next) => {
 app.get("/log-in", (req, res, next) => {
     const displayMessage = req.flash("message");
     req.flash("message", null);
-    res.render("log-in", { message: displayMessage });
+    res.render("log-in", { message: displayMessage, user: req.user });
 });
 
 app.get("/sign-up", (req, res, next) => {
     const displayMessage = req.flash("message");
     req.flash("message", null);
-    res.render("sign-up", { message: displayMessage });
+    res.render("sign-up", { message: displayMessage, user: req.user });
 });
 
 app.get("/new", (req, res, next) => {
@@ -127,6 +128,7 @@ app.post("/sign-up",
                                 if (err) {
                                     return next(err);
                                 }
+                                req.flash("message", "Account successfully created. Please log in.");
                                 res.redirect("/");
                             });
                         }
@@ -159,8 +161,8 @@ app.get("/new-post", (req, res, next) => {
 
 app.post(
     "/new-post", 
-    body('title').not().isEmpty().trim().escape(),
-    body('body').not().isEmpty().trim().escape(),
+    body('title').not().isEmpty().trim(),
+    body('body').not().isEmpty().trim(),
     (req, res, next) => {
         const errors = (validationResult(req));
         if (!errors.isEmpty()) {
