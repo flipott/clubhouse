@@ -4,26 +4,43 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clubhouse</title>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <title>Clubhouse - New Post</title>
 </head>
 <body>
-    <h1>Clubhouse</h1>
-    <% if (message) { %>
-        <div><%= message %></div>
-    <% } %> 
-    <% if (user) { %>
-        <h2>New Post</h2>
-        <form action="" method="POST">
-            <label for="title">Title</label>
-            <input type="text" name="title" maxLength=25 />
-            <label for="body">Message Body</label>
-            <textarea name="body" maxLength=150></textarea>
-            <button>Post Message</button>
-        </form>
-    <% } else { %>
-        <p>Please log in or sign up to access this page.</p>
-        <a href="/log-in">Log In</a>
-        <a href="/sign-up">Sign Up</a>
-    <% } %>
+    <header>
+        <h1><a href="/">Clubhouse</a></h1>
+        <% if (user) { %>
+            <div>
+                <p>Logged in as <%= user.username %></p>
+                <a href="/log-out">Log Out</a>    
+            </div>
+        <% } else { %>
+            <div>
+                <a href="/log-in">Log In</a>
+                <a href="/sign-up">Sign Up</a>
+            </div>
+        <% } %>
+    </header>
+    <div class="main">
+        <% if (user) { %>
+            <form class="post-form" action="" method="POST">
+                <h2>New Post</h2>
+                <div>
+                    <label for="title">Title</label>
+                    <input type="text" name="title" maxLength=25 />    
+                </div>
+                <div>
+                    <label for="body">Message Body</label>
+                    <textarea name="body" maxLength=150></textarea>    
+                </div>
+                <button>Post Message</button>
+            </form>
+        <% } else { %>
+            <h2>Access Denied</h2>
+            <p>Please <a href="/log-in">log in</a> or <a href="/sign-up">sign up</a> to access this page.</p>
+        <% } %>    
+    </div>
+    <footer>Copyright © 2022 Phillip Ott</footer>
 </body>
 </html>

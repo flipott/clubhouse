@@ -4,38 +4,48 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="styles.css" />
     <title>Clubhouse</title>
 </head>
 <body>
-    <h1>Clubhouse</h1>
-    <% if (message) { %>
-        <div><%= message %></div>
-    <% } %> 
-    <% if (user) { %>
-        <p>Welcome back, <%= user.username %></p>
-        <form action="/new-post" method="GET"><button>New Post</button></form>
-        <a href="/log-out">Log Out</a>
-    <% } else { %>
-        <a href="/log-in">Log In</a>
-        <a href="/sign-up">Sign Up</a>
-    <% } %>
-
-    <% if (posts.length) { %>
-        <% posts.forEach(function(post) { %>
-            <div class="post">
-                <p><strong><%= post.title %></strong></p>
-                <p><%= post.body %></p>
-                <% if (user) { %>
-                    <p><%= post.username %></p>
-                    <p><%= post.timestamp %></p>    
-                <% } else { %>
-                    <p>Please log in to see post author and date.</p>
-                <% } %>
+    <header>
+        <h1><a href="/">Clubhouse</a></h1>
+        <% if (user) { %>
+            <div>
+                <p>Logged in as <%= user.username %></p>
+                <a href="/log-out">Log Out</a>    
             </div>
-        <% }) %>
-    <% } else { %>
-        <p>There are no posts to show.</p>
-    <% } %>
-
+        <% } else { %>
+            <div>
+                <a href="/log-in">Log In</a>
+                <a href="/sign-up">Sign Up</a>
+            </div>
+        <% } %>
+    </header>
+    <% if (message) { %>
+        <div class="flash"><%= message %></div>
+    <% } %> 
+    <div class="main">
+        <form id="new-btn" action="/new-post" method="GET"><button>New Post</button></form>
+        <% if (!user && posts.length) { %>
+            <div id="content-blocked">You must be logged in to see posts.</div>
+        <% } %>
+        <% if (posts.length) { %>
+            <div class="post-container" style="filter: <%= user ? 'none' : '2rem' %>">
+            <% posts.forEach(function(post) { %>
+                <div class="post">
+                    <p class="post-title"><strong><%= post.title %></strong></p>
+                    <p class="post-body"><%= post.body %></p>
+                    <p class="post-name"><%= post.username %></p>
+                    <p class="post-time"><em><%= post.timestamp.toLocaleDateString() %> <%= post.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %></em></p>    
+                </div>
+            <% }) %>
+            </div>
+        <% } else { %>
+            <p>There are no posts to show.</p>
+        <% } %>
+    </div>
+    <footer>Copyright © 2022 Phillip Ott</footer>
 </body>
+
 </html>

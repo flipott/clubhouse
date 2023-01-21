@@ -4,20 +4,41 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="styles.css" />
     <title>Clubhouse - Sign Up</title>
 </head>
 <body>
-    <h1>Clubhouse</h1>
-    <h2>Log In</h2>
+    <header>
+        <h1><a href="/">Clubhouse</a></h1>
+        <% if (user) { %>
+            <div>
+                <p>Logged in as <%= user.username %></p>
+                <a href="/log-out">Log Out</a>    
+            </div>
+        <% } else { %>
+            <div>
+                <a href="/log-in">Log In</a>
+                <a href="/sign-up">Sign Up</a>
+            </div>
+        <% } %>
+    </header>
     <% if (message) { %>
-        <div><%= message %></div>
+        <div class="flash"><%= message %></div>
     <% } %>
-    <form action="" method="POST">
-        <label for="username">Username</label>
-        <input type="text" name="username" minlength="2" maxlength="15" />
-        <label for="password">Password</label>
-        <input type="password" name="password" minlength="2" maxlength="15" required />
-        <button>Log In</button>
-    </form>
+    <div class="main">
+        <form class="user-form"  action="" method="POST">
+            <h2>Log In</h2>
+            <div>
+                <label for="username">Username</label>
+                <input type="text" name="username" minlength="2" maxlength="15" required />    
+            </div>
+            <div>
+                <label for="password">Password</label>
+                <input type="password" name="password" minlength="2" maxlength="15" required />    
+            </div>
+            <button>Log In</button>
+        </form>
+    </div>
+    <footer>Copyright © 2022 Phillip Ott</footer>
 </body>
 </html>
