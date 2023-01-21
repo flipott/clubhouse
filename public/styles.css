@@ -1,0 +1,178 @@
+html, body {
+    background:rgb(66, 66, 66);
+    color: white;
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+* {
+box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    max-width: 85%;
+    margin: auto;
+}
+
+header {
+    margin: 12px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+footer {
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+    background:rgb(99, 146, 124);
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+header a {
+    text-decoration: none;
+}
+
+.user-form,
+.post-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    background: rgb(32, 32, 32);
+    width: 400px;
+    padding: 25px;
+}
+
+.user-form input {
+    width: 150px;
+    padding: 4px;
+}
+
+.post-form input,
+.post-form textarea,
+.post-form button {
+    width: 200px;
+}
+
+.post-form textarea {
+    height: 150px;
+    resize:none;
+}
+
+.user-form button {
+    width: 150px;
+}
+
+.user-form > div,
+.post-form > div {
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+
+h2 {
+    margin: 0;
+    padding: 0;
+}
+
+#new-btn {
+    text-align: center;
+}
+
+button {
+    margin: 10px;
+    padding: 6px 10px;
+    border: none;
+}
+
+header > div {
+    display: flex;
+    gap: 8px;
+}
+
+header h1 {
+    flex: 1;
+}
+
+h1, p {
+    padding: 0;
+    margin: 0;
+}
+
+.post-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 250px);
+    grid-gap: 25px;
+    justify-content: center;
+    filter: blur(3px);
+}
+
+a {
+    text-decoration: underline;
+    color: white;
+    font-weight: bold;
+}
+
+#content-blocked {
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    top: 40%;
+    right: 0;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    z-index: 1;
+    background: rgba(99, 146, 124, 0.756);
+    width: fit-content;
+    padding: 12px;
+}
+
+.post {
+    background: rgb(32, 32, 32);
+    width: 250px;
+    height: 200px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-wrap: break-word;
+    user-select: none;
+}
+
+.flash {
+    background:rgb(99, 146, 124);
+    text-align: center;
+}
+
+.post-body {
+    flex: 1;
+}
+
+.post-title {
+    border-bottom: 1px solid white;
+}
+
+.post-time {
+    font-size: 0.8rem;
+}
